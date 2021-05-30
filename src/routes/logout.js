@@ -1,5 +1,4 @@
 const { Router } = require('express')
-const db = require('../db')
 const router = Router()
 
 router.get('/', async (req, res) => {
@@ -13,7 +12,7 @@ router.get('/idp', async (req, res, next) => {
   try {
     const user = req.user
     const issuer = user.issuer
-    const config =  db.get('configs').find({ issuer }).value()
+    const config =  {} //db.get('configs').find({ issuer }).value()
     const endSessionUrl = config.end_session_endpoint
     const idToken = user.id_token
     const redirectBackTo = process.env.HOST

@@ -2,37 +2,66 @@ const { Router } = require('express')
 const passport = require('passport')
 const jwtDecode  = require('jwt-decode')
 const LoginStrategy = require('passport-openidconnect').Strategy
-const axios = require('axios')
-const querystring = require('querystring')
-const db = require('./db')
+const { decode } = require('querystring')
 
+var clientConfig = {
+  hudea_okta_oauth2: {
+    name: process.env.NAME,
+    issuer: process.env.OKTA_DOMAIN,
+    authorization_endpoint: process.env.AUTHORIZATION_URL,
+    token_endpoint: process.env.TOKEN_URL,
+    userinfo_endpoint: process.env.USERINFO_URL,
+    end_session_endpoint: process.env.ENDSESSION_URL,
+    client_id: process.env.CLIENT_ID,
+    client_secret: process.env.CLIENT_SECRET,
+    scope: process.env.SCOPE
+  }
+}
 
-const bcrypt = require('bcrypt')
-
-const saltRounds = 10
-
-const activeConfigs = {}
+let activeConfigs = {}
 const getStatus = (name) => !!activeConfigs[name]
+const name = process.env.NAME
+
 
 const router = Router()
 
-router.get('/auth/:name', (req, ...args) => {
-  const { name } = req.params
-  if (!getStatus(name)) init(name)
-  return passport.authenticate(name)(req, ...args)
+router.get(`/auth/${name}`, (req, res, next) => {
+  //const { name } = req.params
+  var redirectTo = req.query
+  var state = redirectTo ? new Buffer.from(JSON.stringify(redirectTo)).toString('base64') : undefined
+  //if (!getStatus(name)) init(name)
+  var authenticator = passport.authenticate(name,
+    {
+      failureRedirect: '/',
+      state
+    }
+  )
+  authenticator(req, res, next)
 })
-router.get('/auth/:name/callback', (req, ...args) => {
-  const { name } = req.params
-  return passport.authenticate(name, {
-    failureRedirect: '/',
-    successRedirect: '/dashboard'
-  })(req, ...args)
+
+router.get(`/auth/${name}/callback`, (req, res, next) => {
+  if (req.query.error) {
+    return res.redirect('/')
+  }
+  next()
+}, passport.authenticate(name, { failureRedirect: '/' }),
+function(req, res, next) {
+  try {
+    var state = req.query.state
+    req.session.accounts = req.session.accounts || {}
+    req.session.accounts[name] = Object.assign({}, req.user)
+  } catch (error) {
+    console.log(error)
+    res.render('unauthorized', { errorMessage: error })
+  }
+  res.redirect('/dashboard')
 })
 
 // this can be loaded whenever a config is updated
-const init = (name) => {
+const initAuthorization = () => {
+  const config = clientConfig.hudea_okta_oauth2
+  //const name = config.name
   activeConfigs[name] = true
-  const config =  db.get('configs').find({ name }).value()
   if (config)  {
     const {
       client_id,
@@ -60,28 +89,41 @@ const init = (name) => {
           realm: process.env.HOST
         },
         (iss, sub, profile, accessToken, refreshToken, tokens, done)  => {
-          const decoded_access_token = jwtDecode(tokens.access_token)
-          const decoded_id_token = jwtDecode(tokens.id_token)
-          console.log(decoded_access_token)
-          console.log(decoded_id_token)
+          try {
+            //Check id_token and access_token issued from authentication
+            const decodedAccessToken = jwtDecode(tokens.access_token)
+            const decodedIdToken = jwtDecode(tokens.id_token)
 
-          var userEmail = decoded_access_token.sub
-          var userId = decoded_access_token.uid
-          var acs_scope = decoded_access_token.scp
-          var activate = false
-          const operations = {
-            allowed_ops: acs_scope
+            // Define User Object Attributes: email, userid, scopes and tokens
+            const userEmail = decodedIdToken.email
+
+            const expiry = tokens.expires_in
+            const iat = decodedAccessToken.iat
+            const exp = decodedAccessToken.exp
+            const token_exp = new Date((iat + expiry) * 1000).toLocaleString()
+            
+            const userId = decodedAccessToken.uid
+            const acs_scope = decodedAccessToken.scp
+            var activate = true
+            const user = {
+              [userEmail]: {
+                pub: {
+                  issuer: issuer,
+                  email: userEmail,
+                  valid_until: token_exp
+                },
+                secret: {
+                  userId: userId,
+                  id_token: tokens.id_token,
+                  access_token: accessToken,
+                  scope: acs_scope
+                }
+              }
+            }
+            return done(null, user)
+          } catch (error) {
+            console.error(error)
           }
-          const user = {
-            issuer: issuer,
-            userId: userId,
-            email: userEmail,
-            //jwtClaims: jwtClaims,
-            access_token: accessToken,
-            id_token: tokens.id_token,
-            operations: operations
-          }
-          return done(null, user)
         }
       )
     )
@@ -90,5 +132,5 @@ const init = (name) => {
 
 module.exports =  {
   router,
-  init
+  initAuthorization
 }
