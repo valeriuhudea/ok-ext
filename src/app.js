@@ -19,7 +19,7 @@ const cookieParser = require('cookie-parser')
 const redis = require('redis')
 const connectRedis = require('connect-redis')
 
-const RedisStore = connectRedis(session)
+let RedisStore = connectRedis(session)
 
 const redisClient = redis.createClient({
   host: process.env.REDIS_URL,
