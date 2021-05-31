@@ -94,8 +94,8 @@ app.use(session(
       expires: new Date(Date.now() + 60 * 60 * 1000),
       host: process.env.HOST,
       path: '/',
-      httpOnly: false, //process.env.NODE_ENV === 'development',
-      secure: process.env.NODE_ENV === 'development'
+      httpOnly: false,
+      secure: true
     }
   }
 ))
