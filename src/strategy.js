@@ -38,6 +38,7 @@ router.get('/auth/:name', (req, res, next) => {
   authenticator(req, res, next)
 })
 
+/*
 router.get('/auth/:name/callback', (req, res, next, ...args) => {
   const { name } = req.params
   if (req.query.error) {
@@ -57,8 +58,9 @@ router.get('/auth/:name/callback', (req, res, next, ...args) => {
     }(req, ...args)
   }
 })
+*/
 
-/*
+const name = process.env.NAME
 router.get(`/auth/${name}/callback`, (req, res, next) => {
   if (req.query.error) {
     return res.redirect('/')
@@ -76,7 +78,6 @@ function(req, res, next) {
   }
   res.redirect('/dashboard')
 })
-*/
 
 // this can be loaded whenever a config is updated
 const initAuth = (name) => {
