@@ -37,7 +37,7 @@ services:
         - NODE_ENV=development
         - PORT=8080
         - REDIS_URL=redis
-        - HOST=https://wpp-it-dashboard.azurewebsites.net
+        - HOST=https://wpp-it-dash.azurewebsites.net
         - NAME=okta-oidc
         - SESSION_SECRET=00sIL1Dye976jLMbEttsA9P-IbxLefzaB_8ysRAbHE
         - OKTA_DOMAIN=https://hudea.okta.com
