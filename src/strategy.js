@@ -2,7 +2,6 @@ const { Router } = require('express')
 const passport = require('passport')
 const jwtDecode  = require('jwt-decode')
 const LoginStrategy = require('passport-openidconnect').Strategy
-//const { decode } = require('querystring')
 
 var clientConfig = {
   hudea_okta_oauth2: {
