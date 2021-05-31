@@ -26,7 +26,7 @@ services:
     env_file:
       - .env
     image: redis:latest
-    command: ["redis-server",  "--daemonize", "yes", "--bind", "redis", "--port", "6379"]
+    command: ["redis-server", "--daemonize", "yes", "--bind", "redis", "--port", "6379"]
     restart: ${DOCKER_RESTART_POLICY:-unless-stopped}
     stop_grace_period: 3s
     ports:
