@@ -11,8 +11,6 @@ x-app: &default-app
   restart: ${DOCKER_RESTART_POLICY:-unless-stopped}
   stop_grace_period: 3s
   tty: true
-  networks:
-    - app-tier
   volumes:
     - ${DOCKER_WEB_VOLUME:-.:/home/none/app}
 
@@ -26,8 +24,6 @@ services:
     env_file:
       - .env
     image: mcr.microsoft.com/oss/bitnami/redis:6.0.8
-    networks:
-      - app-tier
     environment: 
       - ALLOW_EMPTY_PASSWORD=yes
     #command: ["redis-server", "--bind", "redis", "--port", "6379"]
