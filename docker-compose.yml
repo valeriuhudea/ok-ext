@@ -23,12 +23,14 @@ services:
           memory: ${DOCKER_REDIS_MEMORY:-0}
     env_file:
       - .env
-    image: mcr.microsoft.com/oss/bitnami/redis:6.0.8
+    image: redis:latest
     environment: 
       - ALLOW_EMPTY_PASSWORD=yes
     command: ["redis-server",  "--daemonize", "yes", "--bind", "redis", "--port", "6379"]
     restart: ${DOCKER_RESTART_POLICY:-unless-stopped}
     stop_grace_period: 3s
+    ports:
+        - 6379:6379
     volumes:
       - redis:/data
 
