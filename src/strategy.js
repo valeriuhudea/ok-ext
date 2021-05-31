@@ -29,7 +29,7 @@ router.get('/auth/:name', (req, res, next) => {
   if (!getStatus(name)) initAuth(name)
   var redirectTo = req.query
   var state = redirectTo ? new Buffer.from(JSON.stringify(redirectTo)).toString('base64') : undefined
-  var authenticator = passport.authenticate(name,
+  const authenticator = passport.authenticate(name,
     {
       failureRedirect: '/',
       state

@@ -23,8 +23,10 @@ services:
           memory: ${DOCKER_REDIS_MEMORY:-0}
     env_file:
       - .env
-    image: redis:latest
-    command: ["redis-server", "--bind", "redis", "--port", "6379"]
+    image: mcr.microsoft.com/oss/bitnami/redis:6.0.8
+    environment: 
+      - ALLOW_EMPTY_PASSWORD=yes
+    #command: ["redis-server", "--bind", "redis", "--port", "6379"]
     restart: ${DOCKER_RESTART_POLICY:-unless-stopped}
     stop_grace_period: 3s
     volumes:
@@ -33,21 +35,21 @@ services:
   web:
     <<: *default-app
     #command: "npm start-${NODE_ENV:-production}"
-    environment:
-        - NODE_ENV=development
-        - PORT=8080
-        - REDIS_URL=redis
-        - HOST=https://wpp-it-dash.azurewebsites.net
-        - NAME=okta-oidc
-        - SESSION_SECRET=00sIL1Dye976jLMbEttsA9P-IbxLefzaB_8ysRAbHE
-        - OKTA_DOMAIN=https://hudea.okta.com
-        - AUTHORIZATION_URL=https://hudea.okta.com/oauth2/v1/authorize
-        - TOKEN_URL=https://hudea.okta.com/oauth2/v1/token
-        - USERINFO_URL=https://hudea.okta.com/oauth2/v1/userinfo
-        - ENDSESSION_URL=https://hudea.okta.com/oauth2/v1/logout
-        - CLIENT_ID=0oa9md0hlv509q61E2p7
-        - CLIENT_SECRET=NTe-aOPBgCiROq0K40s4TgYTaiWECAQZ8UDHHn4b
-        - SCOPE=okta.users.manage email
+    #environment:
+    #    - NODE_ENV=development
+    #    - PORT=8080
+    #    - REDIS_URL=redis
+    #    - HOST=https://wpp-it-dash.azurewebsites.net
+    #    - NAME=okta-oidc
+    #    - SESSION_SECRET=00sIL1Dye976jLMbEttsA9P-IbxLefzaB_8ysRAbHE
+    #    - OKTA_DOMAIN=https://hudea.okta.com
+    #    - AUTHORIZATION_URL=https://hudea.okta.com/oauth2/v1/authorize
+    #    - TOKEN_URL=https://hudea.okta.com/oauth2/v1/token
+    #    - USERINFO_URL=https://hudea.okta.com/oauth2/v1/userinfo
+    #    - ENDSESSION_URL=https://hudea.okta.com/oauth2/v1/logout
+    #    - CLIENT_ID=0oa9md0hlv509q61E2p7
+    #    - CLIENT_SECRET=NTe-aOPBgCiROq0K40s4TgYTaiWECAQZ8UDHHn4b
+    #    - SCOPE=okta.users.manage email
     deploy:
       resources:
         limits:
