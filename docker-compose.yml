@@ -12,8 +12,8 @@ x-app: &default-app
   stop_grace_period: 3s
   tty: true
   volumes:
-    - ${DOCKER_WEB_VOLUME:-./public:/app/src/public}
-
+    - ${DOCKER_WEB_VOLUME:-.:/home/none/app}
+    
 services:
   redis:
     deploy:

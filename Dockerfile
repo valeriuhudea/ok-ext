@@ -15,9 +15,9 @@ RUN apt-get update \
 
 USER node
 
-COPY --chown=node:node ./package.json ./
+COPY --chown=node:node package*.json ./
 
-RUN npm install --production
+RUN npm install --only=production
 
 ARG NODE_ENV="production"
 ENV NODE_ENV="${NODE_ENV}" \

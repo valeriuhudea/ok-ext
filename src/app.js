@@ -48,7 +48,7 @@ app.set('trust proxy', 1)
 
 const limiter = new RateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 200, // limit each IP to 100 requests per windowMs
   delayMs: 0 // disable delaying — full speed until the max limit is  reached
 })
 
@@ -103,7 +103,7 @@ app.use(csrf({ cookie: true }))
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, './views'))
-app.use(express.static(path.join(__dirname, './public')))
+app.use(express.static(path.join(__dirname, '../../../app/src/public')))
 
 app.use(passport.initialize())
 app.use(passport.session())
