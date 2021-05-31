@@ -14,7 +14,7 @@ const winston = require('winston')
 const passport = require('passport')
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
-const { initAuthorization } = require('./strategy')
+//const { initAuth } = require('./strategy')
 
 const redis = require('redis')
 const connectRedis = require('connect-redis')
@@ -123,7 +123,7 @@ app.use(routes)
 
 const port = process.env.PORT
 app.listen(port, () => {
-  initAuthorization()
+  //initAuth()
   console.log(`Server running on port ${port}`)
 })
 

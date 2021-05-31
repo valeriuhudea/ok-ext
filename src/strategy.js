@@ -2,7 +2,7 @@ const { Router } = require('express')
 const passport = require('passport')
 const jwtDecode  = require('jwt-decode')
 const LoginStrategy = require('passport-openidconnect').Strategy
-const { decode } = require('querystring')
+//const { decode } = require('querystring')
 
 var clientConfig = {
   hudea_okta_oauth2: {
@@ -20,16 +20,15 @@ var clientConfig = {
 
 let activeConfigs = {}
 const getStatus = (name) => !!activeConfigs[name]
-const name = process.env.NAME
-
+//const name = process.env.NAME
 
 const router = Router()
 
-router.get(`/auth/${name}`, (req, res, next) => {
-  //const { name } = req.params
+router.get('/auth/:name', (req, res, next) => {
+  const { name } = req.params
+  if (!getStatus(name)) initAuth(name)
   var redirectTo = req.query
   var state = redirectTo ? new Buffer.from(JSON.stringify(redirectTo)).toString('base64') : undefined
-  //if (!getStatus(name)) init(name)
   var authenticator = passport.authenticate(name,
     {
       failureRedirect: '/',
@@ -39,6 +38,27 @@ router.get(`/auth/${name}`, (req, res, next) => {
   authenticator(req, res, next)
 })
 
+router.get('/auth/:name/callback', (req, res, next, ...args) => {
+  const { name } = req.params
+  if (req.query.error) {
+    return res.redirect('/')
+  } else {
+    return passport.authenticate(name, { failureRedirect: '/' }),
+    function(req, res, next) {
+      try {
+        var state = req.query.state
+        req.session.accounts = req.session.accounts || {}
+        req.session.accounts[name] = Object.assign({}, req.user)
+      } catch (error) {
+        console.log(error)
+        res.render('unauthorized', { errorMessage: error })
+      }
+      res.redirect('/dashboard')
+    }(req, ...args)
+  }
+})
+
+/*
 router.get(`/auth/${name}/callback`, (req, res, next) => {
   if (req.query.error) {
     return res.redirect('/')
@@ -56,12 +76,13 @@ function(req, res, next) {
   }
   res.redirect('/dashboard')
 })
+*/
 
 // this can be loaded whenever a config is updated
-const initAuthorization = () => {
+const initAuth = (name) => {
+  activeConfigs[name] = true
   const config = clientConfig.hudea_okta_oauth2
   //const name = config.name
-  activeConfigs[name] = true
   if (config)  {
     const {
       client_id,
@@ -101,7 +122,7 @@ const initAuthorization = () => {
             const iat = decodedAccessToken.iat
             const exp = decodedAccessToken.exp
             const token_exp = new Date((iat + expiry) * 1000).toLocaleString()
-            
+
             const userId = decodedAccessToken.uid
             const acs_scope = decodedAccessToken.scp
             var activate = true
@@ -132,5 +153,5 @@ const initAuthorization = () => {
 
 module.exports =  {
   router,
-  initAuthorization
+  initAuth
 }
