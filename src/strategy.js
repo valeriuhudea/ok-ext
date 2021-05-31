@@ -79,10 +79,9 @@ function(req, res, next) {
 })
 
 // this can be loaded whenever a config is updated
-const initAuth = (name) => 
+const initAuth = (name) => {
   activeConfigs[name] = true
   const config = clientConfig.hudea_okta_oauth2
-  //const name = config.name
   if (config)  {
     const {
       client_id,
