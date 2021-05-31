@@ -27,6 +27,5 @@ ENV NODE_ENV="${NODE_ENV}" \
 COPY --chown=node:node . .
 
 EXPOSE 8080
-EXPOSE 6379
 
 CMD ["npm", "run", "prod"]
