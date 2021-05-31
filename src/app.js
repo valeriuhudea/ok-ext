@@ -3,26 +3,48 @@ require('dotenv').config()
 const path = require('path')
 const express = require('express')
 const cors = require('cors')
-const logger = require('morgan')
+const morgan = require('morgan')
 const routes = require('./routes')
 const helmet = require('helmet')
 const csrf = require('csurf')
 const RateLimit = require('express-rate-limit')
+
+const winston = require('winston')
 
 const passport = require('passport')
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
 const { initAuthorization } = require('./strategy')
 
+const redis = require('redis')
+const connectRedis = require('connect-redis')
+
+const RedisStore = connectRedis(session)
+
+const redisClient = redis.createClient({
+  host: process.env.REDIS_URL,
+  port: 6379
+})
+
+redisClient.on('error', function(error) {
+  console.log('Could not establish a connection with redis. ' + error)
+})
+
+redisClient.on('connect', function(error) {
+  console.log('Connected to redis successfully')
+})
+
+//const cookieClient = redis.createClient({ detect_buffers: true })
+
 const app = express()
 
-app.use(logger('dev'))
+app.use(morgan('combined'))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.disable('x-powered-by')
-
+app.set('trust proxy', 1)
 
 const limiter = new RateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -64,6 +86,7 @@ app.use(cookieParser())
 app.use(session(
   {
     secret: process.env.SESSION_SECRET,
+    store: new RedisStore({ client: redisClient }),
     resave: false,
     saveUninitialized: false,
     cookie: {
