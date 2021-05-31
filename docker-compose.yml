@@ -26,7 +26,7 @@ services:
     image: mcr.microsoft.com/oss/bitnami/redis:6.0.8
     environment: 
       - ALLOW_EMPTY_PASSWORD=yes
-    command: ["redis-server", "--bind", "redis", "--port", "6379"]
+    command: ["redis-server",  "--daemonize yes", "--bind", "redis", "--port", "6379"]
     restart: ${DOCKER_RESTART_POLICY:-unless-stopped}
     stop_grace_period: 3s
     volumes:
