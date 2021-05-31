@@ -2,7 +2,6 @@ const { Router } = require('express')
 const passport = require('passport')
 const jwtDecode  = require('jwt-decode')
 const LoginStrategy = require('passport-openidconnect').Strategy
-//const { decode } = require('querystring')
 
 var clientConfig = {
   hudea_okta_oauth2: {
@@ -37,6 +36,7 @@ router.get('/auth/:name', (req, res, next) => {
   )
   authenticator(req, res, next)
 })
+
 /*
 router.get('/auth/:name/callback', (req, res, next, ...args) => {
   const { name } = req.params
@@ -58,6 +58,7 @@ router.get('/auth/:name/callback', (req, res, next, ...args) => {
   }
 })
 */
+
 const name = process.env.NAME
 router.get(`/auth/${name}/callback`, (req, res, next) => {
   if (req.query.error) {
@@ -77,9 +78,8 @@ function(req, res, next) {
   res.redirect('/dashboard')
 })
 
-
 // this can be loaded whenever a config is updated
-const initAuth = (name) => {
+const initAuth = (name) => 
   activeConfigs[name] = true
   const config = clientConfig.hudea_okta_oauth2
   //const name = config.name
