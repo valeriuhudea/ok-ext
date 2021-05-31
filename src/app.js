@@ -44,7 +44,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.disable('x-powered-by')
-app.set('trust proxy', 1)
 
 const limiter = new RateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -94,8 +93,8 @@ app.use(session(
       expires: new Date(Date.now() + 60 * 60 * 1000),
       host: process.env.HOST,
       path: '/',
-      httpOnly: false,
-      secure: true
+      httpOnly: true,
+      secure: false
     }
   }
 ))
@@ -103,6 +102,8 @@ app.use(csrf({ cookie: true }))
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, './views'))
+app.set('trust proxy', 1)
+
 app.use(express.static(path.join(__dirname, '../../../app/src/public')))
 
 app.use(passport.initialize())
