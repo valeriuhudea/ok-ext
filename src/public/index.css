@@ -19,6 +19,11 @@ body {
 	border-radius: 10px;
 	background-image: url('backgroundWPP.jpg');
 }
+
+.wppitdashboardlogo {
+  background-color: #fcfcfc44;
+}
+
 a, a.disabled:hover, a:disabled:hover {
 	color: #00dbff;
 }
