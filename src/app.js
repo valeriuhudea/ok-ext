@@ -34,8 +34,6 @@ redisClient.on('connect', function(error) {
   console.log('Connected to redis successfully')
 })
 
-//const cookieClient = redis.createClient({ detect_buffers: true })
-
 const app = express()
 
 app.use(morgan('combined'))
@@ -104,7 +102,7 @@ app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, './views'))
 app.set('trust proxy', 1)
 
-app.use(express.static(path.join(__dirname, '../../../app/src/public')))
+app.use(express.static(path.join(__dirname, '../../../../app/src/public')))
 
 app.use(passport.initialize())
 app.use(passport.session())

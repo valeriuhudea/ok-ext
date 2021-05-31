@@ -1,7 +1,7 @@
 version: '3.9'
 services:
-  vhapp:
-    container_name: vhapp
+  app:
+    container_name: wpp-it-app
     restart: always
     build: .
     ports:
@@ -9,5 +9,5 @@ services:
     links:
       - redis
   redis:
-    container_name: vhapp-redis
+    container_name: wpp-it-redis
     image: redis:latest
