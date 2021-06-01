@@ -26,7 +26,7 @@ const redisClient = redis.createClient({
   port: process.env.REDIS_PORT,
   password: process.env.REDIS_KEY,
   socket_keepalive: true,
-  socket_initial_delay: 1,
+  socket_initial_delay: 0
 })
 
 redisClient.on('error', function(error) {
