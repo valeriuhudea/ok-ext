@@ -24,12 +24,7 @@ let RedisStore = connectRedis(session)
 const redisClient = redis.createClient({
   host: process.env.REDIS_HOST,
   port: process.env.REDIS_PORT,
-  password: process.env.REDIS_KEY,
-  socket_keepalive: true,
-  enable_offline_queue: true,
-  ttls: {
-    servername: process.env.REDIS_HOST
-  }
+  password: process.env.REDIS_KEY
 })
 
 redisClient.on('error', function(error) {
