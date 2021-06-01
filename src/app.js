@@ -26,6 +26,7 @@ const redisClient = redis.createClient({
   port: process.env.REDIS_PORT,
   password: process.env.REDIS_KEY,
   socket_keepalive: true,
+  no_ready_check: true,
   retry_strategy: function(options) {
   if (options.error && options.error.code === "ECONNREFUSED") {
     return new Error("The server refused the connection")
