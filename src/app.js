@@ -28,11 +28,6 @@ const redisClient = redis.createClient({
   socket_keepalive: true,
 })
 
-client.on('connect', function () {
-    var socket = client.stream
-    socket.setKeepAlive(true, 30 * 1000)
-})
-
 redisClient.on('error', function(error) {
   console.log('Could not establish a connection with redis. ' + error)
 })
