@@ -24,7 +24,13 @@ let RedisStore = connectRedis(session)
 const redisClient = redis.createClient({
   host: process.env.REDIS_HOST,
   port: process.env.REDIS_PORT,
-  password: process.env.REDIS_KEY
+  password: process.env.REDIS_KEY,
+  socket_keepalive: true,
+})
+
+client.on('connect', function () {
+    var socket = client.stream
+    socket.setKeepAlive(true, 30 * 1000)
 })
 
 redisClient.on('error', function(error) {
@@ -32,6 +38,8 @@ redisClient.on('error', function(error) {
 })
 
 redisClient.on('connect', function(error) {
+  var socket = redisClient.stream
+  socket.setKeepAlive(true, 30 * 1000)
   console.log('Connected to redis successfully')
 })
 
