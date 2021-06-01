@@ -37,8 +37,7 @@ const redisClient = redis.createClient({
     return undefined
   }
   return Math.min(options.attempt * 100, 3000)
-}
-}
+  }
 })
 
 redisClient.on('error', function(error) {
