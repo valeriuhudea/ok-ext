@@ -32,6 +32,7 @@ redisClient.on('error', function(error) {
 })
 
 redisClient.on('connect', function(error) {
+  redisClient.stream.setKeepAlive(true, 30 * 1000)
   console.log('Connected to redis successfully')
 })
 
