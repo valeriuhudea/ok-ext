@@ -24,21 +24,7 @@ let RedisStore = connectRedis(session)
 const redisClient = redis.createClient({
   host: process.env.REDIS_HOST,
   port: process.env.REDIS_PORT,
-  password: process.env.REDIS_KEY,
-  socket_keepalive: true,
-  no_ready_check: true,
-  retry_strategy: function(options) {
-  if (options.error && options.error.code === "ECONNREFUSED") {
-    return new Error("The server refused the connection")
-  }
-  if (options.total_retry_time > 1000 * 60 * 60) {
-    return new Error("Retry time exhausted")
-  }
-  if (options.attempt > 10) {
-    return undefined
-  }
-  return Math.min(options.attempt * 100, 3000)
-  }
+  password: process.env.REDIS_KEY
 })
 
 redisClient.on('error', function(error) {
@@ -46,8 +32,6 @@ redisClient.on('error', function(error) {
 })
 
 redisClient.on('connect', function(error) {
-  var socket = redisClient.stream
-  socket.setKeepAlive(true, 30 * 1000)
   console.log('Connected to redis successfully')
 })
 
